@@ -28,6 +28,23 @@ export const addTodoAsync = createAsyncThunk(
 		}
 	}
 );
+export const toggleCompleteAsync = createAsyncThunk(
+	'todos/completeTodoAsync',
+	async (payload) => {
+		const resp = await fetch(`http://localhost:7000/todos/${payload.id}`, {
+			method: 'PATCH',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ completed: payload.completed }),
+		});
+
+		if (resp.ok) {
+			const todo = await resp.json();
+			return { todo };
+		}
+	}
+);
 
 const todoSlice = createSlice({
     name:'todos',
@@ -63,12 +80,12 @@ const todoSlice = createSlice({
 		[addTodoAsync.fulfilled]: (state, action) => {
 			state.push(action.payload.todo);
 		},
-		// [toggleCompleteAsync.fulfilled]: (state, action) => {
-		// 	const index = state.findIndex(
-		// 		(todo) => todo.id === action.payload.todo.id
-		// 	);
-		// 	state[index].completed = action.payload.todo.completed;
-		// },
+		[toggleCompleteAsync.fulfilled]: (state, action) => {
+			const index = state.findIndex(
+				(todo) => todo.id === action.payload.todo.id
+			);
+			state[index].completed = action.payload.todo.completed;
+		},
 		// [deleteTodoAsync.fulfilled]: (state, action) => {
 		// 	return state.filter((todo) => todo.id !== action.payload.id);
 		// },
