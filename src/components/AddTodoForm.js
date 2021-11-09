@@ -12,6 +12,7 @@ const AddTodoForm = () => {
 		dispatch(addTodo({
 			title:value
 		}))
+		setValue('')
 	};
 
 	return (
